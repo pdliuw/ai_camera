@@ -1,6 +1,8 @@
 import 'package:ai_camera/ai_camera.dart';
 import 'package:flutter/material.dart';
 
+///
+/// CameraPage
 class CameraPage extends StatefulWidget {
   String cameraId;
   int pixelFormat;

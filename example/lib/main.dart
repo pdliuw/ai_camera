@@ -1,9 +1,7 @@
+import 'package:ai_camera/ai_camera.dart';
 import 'package:ai_camera_example/camera_page.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
-import 'package:ai_camera/ai_camera.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(MyApp());
@@ -54,13 +52,14 @@ class _AppState extends State<App> {
     );
   }
 
-  goto(AiCameraSelectorResult result) {
-    print("跳转了：$result");
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return CameraPage(
-        cameraId: result.cameraId,
-        pixelFormat: result.format,
-      );
-    }));
+  goto(AiCameraSelectorResult result) async {
+    if (await Permission.camera.request().isGranted) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return CameraPage(
+          cameraId: result.cameraId,
+          pixelFormat: result.format,
+        );
+      }));
+    }
   }
 }
