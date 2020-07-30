@@ -13,8 +13,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-
   @override
   void initState() {
     super.initState();
@@ -44,7 +42,6 @@ class _AppState extends State<App> {
         children: <Widget>[
           Expanded(child: AiCameraSelectorPlatformWidget.defaultStyle(
               selectorCallback: (AiCameraSelectorResult result) {
-            print("点击了：$result");
             goto(result);
           })),
         ],
