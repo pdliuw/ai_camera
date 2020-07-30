@@ -1,13 +1,5 @@
-import 'dart:async';
+library ai_camera;
 
-import 'package:flutter/services.dart';
-
-class AiCamera {
-  static const MethodChannel _channel =
-      const MethodChannel('ai_camera');
-
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
-}
+export 'src/ai_camera.dart';
+export 'src/ai_camera_selector.dart';
+export 'src/ai_camera_selector_result.dart';
