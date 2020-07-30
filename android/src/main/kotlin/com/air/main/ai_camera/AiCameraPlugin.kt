@@ -22,6 +22,7 @@ public class AiCameraPlugin: FlutterPlugin, MethodCallHandler {
     channel.setMethodCallHandler(this);
 
     flutterPluginBinding.platformViewRegistry.registerViewFactory(GlobalConfig.VIEW_TYPE_ID_CAMERA_SELECTOR_PLATFORM_VIEW, AiCameraSelectorPlatformViewFactory(flutterPluginBinding.binaryMessenger))
+    flutterPluginBinding.platformViewRegistry.registerViewFactory(GlobalConfig.VIEW_TYPE_ID_CAMERA_PLATFORM_VIEW, AiCameraPlatformViewFactory(flutterPluginBinding.binaryMessenger))
   }
 
   // This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -40,6 +41,7 @@ public class AiCameraPlugin: FlutterPlugin, MethodCallHandler {
       channel.setMethodCallHandler(AiCameraPlugin())
       
       registrar.platformViewRegistry().registerViewFactory(GlobalConfig.VIEW_TYPE_ID_CAMERA_SELECTOR_PLATFORM_VIEW, AiCameraSelectorPlatformViewFactory(registrar.messenger()))
+      registrar.platformViewRegistry().registerViewFactory(GlobalConfig.VIEW_TYPE_ID_CAMERA_PLATFORM_VIEW, AiCameraPlatformViewFactory(registrar.messenger()))
     }
   }
 

@@ -41,6 +41,10 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    //layout
+    implementation "androidx.constraintlayout:constraintlayout:${rootProject.ext.constraint_version}"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.ext.lifecycle_runtime_ktx_version}"
+
     // CameraX core library using the camera2 implementation
 
     // The following line is optional, as the core library is included indirectly by camera-camera2
@@ -53,4 +57,5 @@ dependencies {
     // If you want to additionally use the CameraX Extensions library
     implementation "androidx.camera:camera-extensions:${rootProject.ext.camera_extensions_version}"
     implementation "androidx.recyclerview:recyclerview:${rootProject.ext.recycler_view_version}"
+    implementation "androidx.exifinterface:exifinterface:${rootProject.ext.exifinterface_version}"
 }
