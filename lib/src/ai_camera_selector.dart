@@ -1,87 +1,85 @@
-import 'package:ai_camera/src/ai_camera_selector_result.dart';
+import 'package:ai_camera/ai_camera.dart';
 import 'package:ai_camera/src/global_config.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// [AiCameraSelectorCallback]
-typedef AiCameraSelectorCallback = Function(AiCameraSelectorResult result);
+/// [AiCameraSelectorCameraListCallback]
+typedef AiCameraSelectorCameraListCallback = void Function(
+    List<AiCameraSelectorResult> result);
 
 ///
-/// CameraSelector PlatformWidget
-/// [AiCameraSelectorPlatformWidget]
-/// [GlobalConfig]
-/// [AiCameraSelectorCallback]
-class AiCameraSelectorPlatformWidget extends StatefulWidget {
-  AiCameraSelectorCallback _aiCameraSelectorCallback;
-  AiCameraSelectorPlatformWidget.defaultStyle({
-    @required AiCameraSelectorCallback selectorCallback,
-  }) {
-    //Must not be null
-    _aiCameraSelectorCallback = selectorCallback ??
-        (AiCameraSelectorResult result) {
-          //do nothing
-        };
-  }
-  @override
-  State<StatefulWidget> createState() {
-    return _State();
-  }
-}
+/// AiCameraSelector
+/// * Get Camera list [getCameraList]
+/// * Receive Camera list [addSelectorCameraListCallback]\[AiCameraSelectorCameraListCallback]
+class AiCameraSelector {
+  ///MethodChannel
+  MethodChannel _methodChannel =
+      MethodChannel(GlobalConfig.METHOD_CHANNEL_NAME_CAMERA_SELECTOR);
 
-class _State extends State<AiCameraSelectorPlatformWidget> {
-  static const MethodChannel _channel = const MethodChannel(
-      GlobalConfig.METHOD_CHANNEL_NAME_CAMERA_SELECTOR_PLATFORM_VIEW);
+  ///Singleton
+  static AiCameraSelector instance = AiCameraSelector._();
 
-  @override
-  void initState() {
-    super.initState();
+  ///Camera list container
+  List<AiCameraSelectorResult> _cameraList = [];
 
-    _channel.setMethodCallHandler((MethodCall call) {
-      var method = call.method;
-      var arguments = call.arguments;
+  ///CameraCallback
+  List<AiCameraSelectorCameraListCallback> _cameraListCallbackList = [];
 
-      switch (method) {
-        case "ai_camera_selector_result":
-          var selectorResult =
-              AiCameraSelectorResult.defaultStyle(arguments: arguments);
-
-          widget._aiCameraSelectorCallback(selectorResult);
-          break;
-
-        default:
-          break;
-      }
-
-      return Future.delayed(Duration(seconds: 1));
-    });
+  ///
+  /// Instance
+  AiCameraSelector._() {
+    _methodChannel.setMethodCallHandler(_handler);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return _getCameraWidget();
-  }
+  ///
+  /// Handler method
+  Future<dynamic> _handler(
+    MethodCall call,
+  ) {
+    String method = call.method;
+    switch (method) {
+      case "ai_camera_camera_list_result_start":
+        _cameraList.clear();
+        break;
 
-  Widget _getCameraWidget() {
-    TargetPlatform targetPlatform = Theme.of(context).platform;
+      case "ai_camera_camera_list_result":
+        var camera = AiCameraSelectorResult.defaultStyle(
+          arguments: call.arguments,
+        );
 
-    if (TargetPlatform.android == targetPlatform) {
-      return AndroidView(
-        viewType: GlobalConfig.VIEW_TYPE_ID_CAMERA_SELECTOR_PLATFORM_VIEW,
-        creationParams: {},
-        creationParamsCodec: StandardMessageCodec(),
-        onPlatformViewCreated: (int id) {},
-      );
-    } else if (TargetPlatform.iOS == targetPlatform) {
-      return UiKitView(
-        viewType: GlobalConfig.VIEW_TYPE_ID_CAMERA_SELECTOR_PLATFORM_VIEW,
-        creationParams: {},
-        creationParamsCodec: StandardMessageCodec(),
-        onPlatformViewCreated: (int id) {},
-      );
-    } else {
-      return Center(
-        child: Text("UnSupported platform"),
-      );
+        _cameraList.add(camera);
+        break;
+
+      case "ai_camera_camera_list_result_end":
+        for (var callback in _cameraListCallbackList) {
+          callback(_cameraList);
+        }
+        break;
     }
+
+    return Future.delayed(Duration(seconds: 1));
+  }
+
+  ///
+  /// Add callback
+  /// [removeSelectorCameraListCallback]
+  addSelectorCameraListCallback({
+    AiCameraSelectorCameraListCallback cameraListCallback,
+  }) {
+    _cameraListCallbackList.add(cameraListCallback);
+  }
+
+  ///
+  /// Remove callback
+  /// [addSelectorCameraListCallback]
+  removeSelectorCameraListCallback({
+    AiCameraSelectorCameraListCallback cameraListCallback,
+  }) {
+    _cameraListCallbackList.remove(cameraListCallback);
+  }
+
+  ///
+  /// Get camera list
+  getCameraList() {
+    _methodChannel.invokeMethod("cameraList", {});
   }
 }
