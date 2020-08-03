@@ -4,10 +4,10 @@ packages:
   ai_camera:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
-    version: "0.1.0"
+      name: ai_camera
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1"
   archive:
     dependency: transitive
     description:
